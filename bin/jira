@@ -1,0 +1,4 @@
+#!/bin/sh
+# Jira CLI backed by the nvimjira Lua code. Symlink this onto your PATH.
+ROOT=$(dirname "$(dirname "$(readlink -f "$0")")")
+exec nvim --clean -l "$ROOT/lua/jira/cli.lua" "$@"
