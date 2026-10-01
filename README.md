@@ -6,13 +6,41 @@ Requires Neovim 0.10+ and `curl`. Works with Jira Cloud (API v3) and Jira Server
 
 ## Install
 
-lazy.nvim, from a local checkout:
+### lazy.nvim
+
+Create `~/.config/nvim/lua/plugins/jira.lua`:
 
 ```lua
-{ dir = "~/dev/nvimjira", cmd = "Jira", opts = {} }
+return {
+  "dahorg/NvimJira",
+  main = "jira",
+  cmd = "Jira",
+  keys = {
+    { "<leader>jm", "<cmd>Jira mine<cr>", desc = "Jira: my issues" },
+    { "<leader>jv", "<cmd>Jira view<cr>", desc = "Jira: view issue under cursor" },
+    { "<leader>js", ":Jira search ", desc = "Jira: search (JQL)" },
+    { "<leader>jc", "<cmd>Jira create<cr>", desc = "Jira: create issue" },
+  },
+  opts = {
+    -- All optional. Leave out anything you set through JIRA_* env vars.
+    -- url = "https://yourcompany.atlassian.net",
+    -- email = "you@company.com",
+    -- token_cmd = "pass show jira",
+    -- default_project = "ABC",
+    -- open_cmd = "vsplit",
+  },
+}
 ```
 
-`setup()` is optional. Every option can come from environment variables instead.
+To work on a local checkout, replace `"dahorg/NvimJira"` with `dir = "~/dev/nvimjira"`.
+
+lazy.nvim calls `require("jira").setup(opts)` for you. `setup()` is optional, and every option can also come from environment variables.
+
+To get the `jira` CLI from the lazy install, link it onto your PATH:
+
+```sh
+ln -s ~/.local/share/nvim/lazy/NvimJira/bin/jira ~/.local/bin/jira
+```
 
 ## Authentication
 
