@@ -113,3 +113,42 @@ ln -s ~/dev/nvimjira/skills/jira ~/.claude/skills/jira
 ```
 
 Make sure the `JIRA_*` variables are exported in the shell Claude Code runs in, or use the config file.
+
+## lazygit: Jira-linked commits
+
+`bin/lazygit-jira` starts [lazygit](https://github.com/jesseduffield/lazygit) with one change: `c` in the files panel asks for a ticket, a commit type and a summary, then commits as e.g. `fix(#PL-250): handle Safari's cookie quirk`.
+
+```sh
+ln -s ~/dev/nvimjira/bin/lazygit-jira ~/.local/bin/lazygit-jira
+alias lg=lazygit-jira
+```
+
+1. **Ticket:** your tickets in *In Progress* or *Waiting*, plus "(no ticket)". If the Jira lookup fails, the error is shown on the "(no ticket)" line.
+2. **Commit type:** `fix`, `feat`, `chore`, `refactor`, `docs`, `test`, `perf`, `build`, `ci` or `style`.
+3. **Summary.** With "(no ticket)" the message is just `fix: summary`.
+
+The wrapper uses the same credentials as the plugin and CLI (see [Authentication](#authentication)), so lazygit needs to start from a shell that has the `JIRA_*` variables, or you can use the config file.
+Run `lazygit-jira --check` to check that authentication and the ticket query work from your current shell.
+
+lazygit itself is not modified. The wrapper sets `LG_CONFIG_FILE` to your normal lazygit config plus `lazygit/jira-commit.yml`, which adds a custom command on `c`. Edit that file to change the commit types or the message format.
+
+| Variable           | Default                                                                                   | Purpose                     |
+| ------------------ | ----------------------------------------------------------------------------------------- | --------------------------- |
+| `LAZYGIT_JIRA_JQL` | `assignee = currentUser() AND status in ("In Progress", "Waiting") ORDER BY updated DESC` | Which tickets are listed    |
+| `LAZYGIT_BIN`      | `lazygit`                                                                                 | lazygit binary to run       |
+| `LG_CONFIG_FILE`   | `~/.config/lazygit/config.yml` (if it exists)                                             | Base config(s) to layer on  |
+
+Notes:
+
+- `c` no longer opens lazygit's built-in commit panel. `C` (commit with your git editor) still works.
+- lazygit replaces lists when merging config files, so `customCommands` in your own config are replaced by those in `jira-commit.yml`. Copy them into `jira-commit.yml` to keep them.
+- Don't name the symlink `lazygit` unless `LAZYGIT_BIN` points at the real binary, or the wrapper will call itself.
+
+### Tests
+
+```sh
+test/lazygit_jira_test.sh          # offline, against a fake Jira server
+test/lazygit_jira_test.sh --live   # also checks your real credentials
+```
+
+The offline tests run the real `jira` CLI against `test/fake_jira.py`, which only accepts the expected Basic auth header. They cover the ticket list, the auth sources (env vars, `JIRA_API_TOKEN_CMD` and the config file), error handling and the environment lazygit is started with. They also drive a real lazygit in tmux to check the commit messages; that part is skipped if `tmux` or `lazygit` is missing. Requires `python3`.

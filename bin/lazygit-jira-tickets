@@ -1,0 +1,18 @@
+#!/bin/sh
+# Prints the ticket menu for lazygit-jira: your tickets in In Progress or Waiting,
+# one per line as "KEY  [Status]  Type  Summary  (Assignee)", followed by a
+# "no ticket" option. If the Jira lookup fails, the "no ticket" line carries the
+# error so it shows up in lazygit. With --strict, a failed lookup exits non-zero.
+# Override the query with LAZYGIT_JIRA_JQL.
+DIR=$(dirname "$(readlink -f "$0")")
+jql=${LAZYGIT_JIRA_JQL:-'assignee = currentUser() AND status in ("In Progress", "Waiting") ORDER BY updated DESC'}
+
+if out=$("$DIR/jira" search "$jql" --max 50 2>&1); then
+  printf '%s\n' "$out" | grep -E '^[A-Z][A-Z0-9_]*-[0-9]+ '
+  echo 'NONE  (no ticket)'
+else
+  err=$(printf '%s\n' "$out" | tail -n 1 | sed 's/^jira: //')
+  echo "NONE  (no ticket) - Jira lookup failed: $err"
+  [ "$1" = "--strict" ] && exit 1
+fi
+exit 0

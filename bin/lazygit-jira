@@ -1,0 +1,28 @@
+#!/bin/sh
+# Runs lazygit with lazygit/jira-commit.yml layered on top of your usual config,
+# so "c" in the files panel links the commit to a Jira ticket.
+#
+#   lazygit-jira [lazygit args]   start lazygit
+#   lazygit-jira --check          check Jira auth and the ticket query, then exit
+#
+# Set LAZYGIT_BIN to use a different lazygit binary.
+ROOT=$(dirname "$(dirname "$(readlink -f "$0")")")
+
+# lazygit runs lazygit-jira-tickets from PATH, so make sure it finds ours.
+PATH=$ROOT/bin:$PATH
+export PATH
+
+if [ "$1" = "--check" ]; then
+  "$ROOT/bin/jira" whoami || exit 1
+  "$ROOT/bin/lazygit-jira-tickets" --strict
+  exit
+fi
+
+if [ -n "$LG_CONFIG_FILE" ]; then
+  base=$LG_CONFIG_FILE
+else
+  base=${CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/lazygit}/config.yml
+  [ -f "$base" ] || base=
+fi
+
+LG_CONFIG_FILE=${base:+$base,}$ROOT/lazygit/jira-commit.yml exec "${LAZYGIT_BIN:-lazygit}" "$@"

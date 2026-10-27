@@ -1,0 +1,40 @@
+# Layered on top of your normal lazygit config by bin/lazygit-jira.
+# Overrides "c" in the files panel: pick an In Progress or Waiting Jira ticket, a
+# conventional-commit type and a summary, then commits as e.g.
+#   fix(#PL-250): some fix
+customCommands:
+  - key: 'c'
+    context: 'files'
+    description: 'Commit linked to an in-progress Jira ticket'
+    loadingText: 'Committing...'
+    prompts:
+      - type: 'menuFromCommand'
+        title: 'Jira ticket (In Progress / Waiting)'
+        key: 'Ticket'
+        command: 'lazygit-jira-tickets'
+        filter: '^(?P<key>\S+)\s+(?P<rest>.*)$'
+        valueFormat: '{{ .key }}'
+        labelFormat: '{{ .key | green }} {{ .rest }}'
+      - type: 'menu'
+        title: 'Commit type'
+        key: 'Type'
+        options:
+          - { value: 'fix', description: 'A bug fix' }
+          - { value: 'feat', description: 'A new feature' }
+          - { value: 'chore', description: 'Maintenance' }
+          - { value: 'refactor', description: 'Code change that neither fixes a bug nor adds a feature' }
+          - { value: 'docs', description: 'Documentation only' }
+          - { value: 'test', description: 'Adding or fixing tests' }
+          - { value: 'perf', description: 'Performance improvement' }
+          - { value: 'build', description: 'Build system or dependencies' }
+          - { value: 'ci', description: 'CI configuration' }
+          - { value: 'style', description: 'Formatting, no code change' }
+      - type: 'input'
+        title: '{{ .Form.Type }}{{ if ne .Form.Ticket "NONE" }}(#{{ .Form.Ticket }}){{ end }}: '
+        key: 'Summary'
+    command: >-
+      git commit -m {{ if eq .Form.Ticket "NONE" -}}
+      {{ printf "%s: %s" .Form.Type .Form.Summary | quote }}
+      {{- else -}}
+      {{ printf "%s(#%s): %s" .Form.Type .Form.Ticket .Form.Summary | quote }}
+      {{- end }}
