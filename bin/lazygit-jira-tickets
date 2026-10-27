@@ -1,11 +1,13 @@
 #!/bin/sh
-# Prints the ticket menu for lazygit-jira: your tickets in In Progress or Waiting,
+# Prints the ticket menu for lazygit-jira: your tickets in the In Progress category,
 # one per line as "KEY  [Status]  Type  Summary  (Assignee)", followed by a
 # "no ticket" option. If the Jira lookup fails, the "no ticket" line carries the
 # error so it shows up in lazygit. With --strict, a failed lookup exits non-zero.
 # Override the query with LAZYGIT_JIRA_JQL.
 DIR=$(dirname "$(readlink -f "$0")")
-jql=${LAZYGIT_JIRA_JQL:-'assignee = currentUser() AND status in ("In Progress", "Waiting") ORDER BY updated DESC'}
+# Matches on status category, not status name, since names vary between sites
+# (some prefix them with emoji, e.g. "🔵In Progress"). Waiting is in this category too.
+jql=${LAZYGIT_JIRA_JQL:-'assignee = currentUser() AND statusCategory = "In Progress" ORDER BY updated DESC'}
 
 if out=$("$DIR/jira" search "$jql" --max 50 2>&1); then
   printf '%s\n' "$out" | grep -E '^[A-Z][A-Z0-9_]*-[0-9]+ '

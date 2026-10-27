@@ -123,7 +123,7 @@ ln -s ~/dev/nvimjira/bin/lazygit-jira ~/.local/bin/lazygit-jira
 alias lg=lazygit-jira
 ```
 
-1. **Ticket:** your tickets in *In Progress* or *Waiting*, plus "(no ticket)". If the Jira lookup fails, the error is shown on the "(no ticket)" line.
+1. **Ticket:** your tickets whose status is in Jira's *In Progress* category (e.g. In Progress, Waiting, In Review), plus "(no ticket)". If the Jira lookup fails, the error is shown on the "(no ticket)" line.
 2. **Commit type:** `fix`, `feat`, `chore`, `refactor`, `docs`, `test`, `perf`, `build`, `ci` or `style`.
 3. **Summary.** With "(no ticket)" the message is just `fix: summary`.
 
@@ -134,7 +134,7 @@ lazygit itself is not modified. The wrapper sets `LG_CONFIG_FILE` to your normal
 
 | Variable           | Default                                                                                   | Purpose                     |
 | ------------------ | ----------------------------------------------------------------------------------------- | --------------------------- |
-| `LAZYGIT_JIRA_JQL` | `assignee = currentUser() AND status in ("In Progress", "Waiting") ORDER BY updated DESC` | Which tickets are listed    |
+| `LAZYGIT_JIRA_JQL` | `assignee = currentUser() AND statusCategory = "In Progress" ORDER BY updated DESC`       | Which tickets are listed    |
 | `LAZYGIT_BIN`      | `lazygit`                                                                                 | lazygit binary to run       |
 | `LG_CONFIG_FILE`   | `~/.config/lazygit/config.yml` (if it exists)                                             | Base config(s) to layer on  |
 

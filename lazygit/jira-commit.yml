@@ -1,5 +1,5 @@
 # Layered on top of your normal lazygit config by bin/lazygit-jira.
-# Overrides "c" in the files panel: pick an In Progress or Waiting Jira ticket, a
+# Overrides "c" in the files panel: pick an in-progress Jira ticket, a
 # conventional-commit type and a summary, then commits as e.g.
 #   fix(#PL-250): some fix
 customCommands:

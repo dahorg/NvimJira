@@ -70,9 +70,9 @@ else
   not_ok "sends Basic auth built from JIRA_EMAIL and JIRA_API_TOKEN" "$(cat "$TMP/requests.log")"
 fi
 
-grep -qF 'assignee = currentUser() AND status in (\"In Progress\", \"Waiting\")' "$TMP/requests.log" \
-  && ok "default JQL asks for In Progress and Waiting" \
-  || not_ok "default JQL asks for In Progress and Waiting" "$(cat "$TMP/requests.log")"
+grep -qF 'assignee = currentUser() AND statusCategory = \"In Progress\"' "$TMP/requests.log" \
+  && ok "default JQL asks for the In Progress status category" \
+  || not_ok "default JQL asks for the In Progress status category" "$(cat "$TMP/requests.log")"
 
 : >"$TMP/requests.log"
 good LAZYGIT_JIRA_JQL='project = PL' "$BIN/lazygit-jira-tickets" >/dev/null
