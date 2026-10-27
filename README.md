@@ -144,6 +144,29 @@ Notes:
 - lazygit replaces lists when merging config files, so `customCommands` in your own config are replaced by those in `jira-commit.yml`. Copy them into `jira-commit.yml` to keep them.
 - Don't name the symlink `lazygit` unless `LAZYGIT_BIN` points at the real binary, or the wrapper will call itself.
 
+### Inside Neovim (lazygit.nvim)
+
+[lazygit.nvim](https://github.com/kdheepak/lazygit.nvim) always runs plain `lazygit`, so it skips the wrapper. Have it load the same config files, and put `lazygit-jira-tickets` on your `PATH` because lazygit calls it to list tickets:
+
+```sh
+ln -s ~/dev/nvimjira/bin/lazygit-jira-tickets ~/.local/bin/lazygit-jira-tickets
+```
+
+```lua
+{
+  "kdheepak/lazygit.nvim",
+  init = function()
+    vim.g.lazygit_use_custom_config_file_path = 1
+    vim.g.lazygit_config_file_path = {
+      vim.fn.expand("~/.config/lazygit/config.yml"), -- drop this line if you have no config.yml
+      vim.fn.expand("~/dev/nvimjira/lazygit/jira-commit.yml"),
+    }
+  end,
+}
+```
+
+Restart Neovim after changing this. Neovim also needs the `JIRA_*` variables (or the config file) for the ticket lookup to work.
+
 ### Tests
 
 ```sh
