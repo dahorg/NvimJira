@@ -171,11 +171,15 @@ e2e_commit() { # name, menu keys..., summary; expects $1 as the commit subject
 
 if command -v tmux >/dev/null && command -v lazygit >/dev/null; then
   # Ticket PL-250, type fix, summary with a quote to check shell escaping.
-  e2e_commit "fix(#PL-250): handle Safari's cookie quirk" Enter Enter "text:handle Safari's cookie quirk" Enter
+  e2e_commit "fix: handle Safari's cookie quirk (PL-250)" Enter Enter Enter "text:handle Safari's cookie quirk" Enter
   # Ticket PL-237 (second), type feat (second).
-  e2e_commit "feat(#PL-237): add audit log" j Enter j Enter "text:add audit log" Enter
+  e2e_commit "feat: add audit log (PL-237)" j Enter j Enter Enter "text:add audit log" Enter
   # No ticket (third), type chore (third).
-  e2e_commit "chore: bump deps" j j Enter j j Enter "text:bump deps" Enter
+  e2e_commit "chore: bump deps" j j Enter j j Enter Enter "text:bump deps" Enter
+  # Ticket PL-250, type fix, scope mssql.
+  e2e_commit "fix(mssql): handle Safari's cookie quirk (PL-250)" Enter Enter "text:mssql" Enter "text:handle Safari's cookie quirk" Enter
+  # No ticket, type chore, scope ci.
+  e2e_commit "chore(ci): bump deps" j j Enter j j Enter "text:ci" Enter "text:bump deps" Enter
 else
   skipped "e2e tests (need tmux and lazygit)"
 fi

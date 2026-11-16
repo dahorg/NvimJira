@@ -1,7 +1,8 @@
 # Layered on top of your normal lazygit config by bin/lazygit-jira.
 # Overrides "c" in the files panel: pick an in-progress Jira ticket, a
 # conventional-commit type and a summary, then commits as e.g.
-#   fix(#PL-250): some fix
+#   fix(mssql): some fix (PL-250)
+# The scope is optional; leave it empty to get "fix: some fix (PL-250)".
 customCommands:
   - key: 'c'
     context: 'files'
@@ -30,11 +31,16 @@ customCommands:
           - { value: 'ci', description: 'CI configuration' }
           - { value: 'style', description: 'Formatting, no code change' }
       - type: 'input'
-        title: '{{ .Form.Type }}{{ if ne .Form.Ticket "NONE" }}(#{{ .Form.Ticket }}){{ end }}: '
+        title: 'Scope (optional, e.g. mssql; Enter to skip): '
+        key: 'Scope'
+      - type: 'input'
+        title: '{{ .Form.Type }}{{ if .Form.Scope }}({{ .Form.Scope }}){{ end }}: '
         key: 'Summary'
     command: >-
-      git commit -m {{ if eq .Form.Ticket "NONE" -}}
-      {{ printf "%s: %s" .Form.Type .Form.Summary | quote }}
+      git commit -m {{ $head := .Form.Type -}}
+      {{ if .Form.Scope }}{{ $head = printf "%s(%s)" .Form.Type .Form.Scope }}{{ end -}}
+      {{ if eq .Form.Ticket "NONE" -}}
+      {{ printf "%s: %s" $head .Form.Summary | quote }}
       {{- else -}}
-      {{ printf "%s(#%s): %s" .Form.Type .Form.Ticket .Form.Summary | quote }}
+      {{ printf "%s: %s (%s)" $head .Form.Summary .Form.Ticket | quote }}
       {{- end }}

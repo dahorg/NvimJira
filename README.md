@@ -116,7 +116,7 @@ Make sure the `JIRA_*` variables are exported in the shell Claude Code runs in, 
 
 ## lazygit: Jira-linked commits
 
-`bin/lazygit-jira` starts [lazygit](https://github.com/jesseduffield/lazygit) with one change: `c` in the files panel asks for a ticket, a commit type and a summary, then commits as e.g. `fix(#PL-250): handle Safari's cookie quirk`.
+`bin/lazygit-jira` starts [lazygit](https://github.com/jesseduffield/lazygit) with one change: `c` in the files panel asks for a ticket, a commit type, an optional scope and a summary, then commits as e.g. `fix: handle Safari's cookie quirk (PL-250)`.
 
 ```sh
 ln -s ~/dev/nvimjira/bin/lazygit-jira ~/.local/bin/lazygit-jira
@@ -125,7 +125,8 @@ alias lg=lazygit-jira
 
 1. **Ticket:** your tickets whose status is in Jira's *In Progress* category (e.g. In Progress, Waiting, In Review), plus "(no ticket)". If the Jira lookup fails, the error is shown on the "(no ticket)" line.
 2. **Commit type:** `fix`, `feat`, `chore`, `refactor`, `docs`, `test`, `perf`, `build`, `ci` or `style`.
-3. **Summary.** With "(no ticket)" the message is just `fix: summary`.
+3. **Scope** (optional): e.g. `mssql`. Leave it empty to skip it. A PR title check usually only accepts lowercase letters, digits and `-`.
+4. **Summary.** The ticket key is appended to the end of the subject, e.g. `fix(mssql): handle Safari's cookie quirk (PL-250)`. With "(no ticket)" the message is just `fix: summary`.
 
 The wrapper uses the same credentials as the plugin and CLI (see [Authentication](#authentication)), so lazygit needs to start from a shell that has the `JIRA_*` variables, or you can use the config file.
 Run `lazygit-jira --check` to check that authentication and the ticket query work from your current shell.
