@@ -123,7 +123,7 @@ ln -s ~/dev/nvimjira/bin/lazygit-jira ~/.local/bin/lazygit-jira
 alias lg=lazygit-jira
 ```
 
-1. **Ticket:** your tickets whose status is in Jira's *In Progress* category (e.g. In Progress, Waiting, In Review), plus "(no ticket)". If the Jira lookup fails, the error is shown on the "(no ticket)" line.
+1. **Ticket:** your tickets whose status is in Jira's *In Progress* category (e.g. In Progress, Waiting, In Review), preceded by "(no ticket)" at the top. If the Jira lookup fails, the error is shown on the "(no ticket)" line.
 2. **Commit type:** `fix`, `feat`, `chore`, `refactor`, `docs`, `test`, `perf`, `build`, `ci` or `style`.
 3. **Summary.** With "(no ticket)" the message is just `fix: summary`.
 
